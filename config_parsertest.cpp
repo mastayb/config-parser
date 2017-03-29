@@ -3,7 +3,7 @@
 
 namespace {
 
-   class ConfigParserTest : public ::testing:Test 
+   class ConfigParserTest : public ::testing::Test 
    {
    protected:
 
