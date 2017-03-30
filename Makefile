@@ -29,7 +29,7 @@ CXXFLAGS += -g -Wall -Wextra -pthread
 
 # All tests produced by this Makefile.  Remember to add new tests you
 # created to the list.
-TESTS = config_parsertest 
+TESTS = config_parser_test parse_utilities_test
 
 # All Google Test headers.  Usually you shouldn't change this
 # definition.
@@ -67,16 +67,25 @@ gtest.a : gtest-all.o
 gtest_main.a : gtest-all.o gtest_main.o
 	$(AR) $(ARFLAGS) $@ $^
 
-# Builds a sample test.  A test should link with either gtest.a or
+# A test should link with either gtest.a or
 # gtest_main.a, depending on whether it defines its own main()
 # function.
+#
 
-config_parser.o : $(USER_DIR)/config_parser.cpp $(USER_DIR)/config_parser.h $(GTEST_HEADERS)
+parse_utilities.p: $(USER_DIR)/parse_utilities.cpp
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $(USER_DIR)/parse_utilities.cpp
+
+parse_utilities_test.o : $(USER_DIR)/parse_utilities_test.cpp
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $(USER_DIR)/parse_utilities_test.cpp
+
+parse_utilities_test : parse_utilities.o parse_utilities_test.o gtest_main.a
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -lpthread $^ -o $@
+
+config_parser.o : $(USER_DIR)/config_parser.cpp 
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $(USER_DIR)/config_parser.cpp
 
-config_parsertest.o : $(USER_DIR)/config_parsertest.cpp \
-                     $(USER_DIR)/config_parser.h $(GTEST_HEADERS)
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $(USER_DIR)/config_parsertest.cpp
+config_parser_test.o : $(USER_DIR)/config_parser_test.cpp
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $(USER_DIR)/config_parser_test.cpp
 
-config_parsertest : config_parser.o config_parsertest.o gtest_main.a
+config_parser_test : config_parser.o config_parser_test.o gtest_main.a
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -lpthread $^ -o $@

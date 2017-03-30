@@ -1,5 +1,10 @@
 #include "config_parser.h"
-#include <istream>
+#include "parse_utilities.h"
+#include <fstream>
+#include <stdexcept>
+
+namespace SimpleConfig
+{
 
 ConfigParser::ConfigParser()
 {}
@@ -7,14 +12,27 @@ ConfigParser::ConfigParser()
 ConfigParser::~ConfigParser()
 {}
 
-void ConfigParser::Parse(const std::string& filename)
+void ConfigParser::Parse(const char *filename)
 {
+   std::ifstream file(filename);
+   if (! file.is_open() )
+   {
+      std::string fName(filename);
+      throw std::runtime_error("Could not open file " + fName);
+   }
 
+   Parse(file);
 }
 
-void ConfigParser::Parse(std::istream configStream)
+void ConfigParser::Parse(std::istream& configStream)
 {
+   std::string line;
 
+   //while(std::getline(configStream, line))
+   //{
+
+
+   
 }
 
 bool ConfigParser::LookupBoolean(const std::string& key)
@@ -42,3 +60,4 @@ std::string ConfigParser::LookupString(const std::string& key)
    return "";
 }
 
+}
