@@ -82,23 +82,35 @@ void ConfigParser::ParseAssignment(std::istream& configStream)
     parseMap[curSection][id] = mCurToken;
 }
 
+Token ConfigParser::Lookup(const std::string& section, const std::string& key)
+{
+    if(parseMap.count(section) == 0)
+    {
+        SectionError(section);
+    }
+    if(parseMap[section].count(key) == 0)
+    {
+        KeyError(section, key);
+    }
+
+    return parseMap[section][key];
+}
+
+
 bool ConfigParser::LookupBoolean(const std::string& section, const std::string& key)
 {
    bool value;
-   if(parseMap[section].count(key) != 0)
+   try 
    {
-      try 
-      {
-         value = Str2Bool(parseMap[section][key]);
-      }
-      catch(std::logic_error& e)
-      {
-         ConversionError(section, key, e.what());
-      }
+      value = Str2Bool(Lookup(section, key).lexeme);
    }
-   else
+   catch(ConversionError& e)
    {
-      KeyError(key);
+     //ConversionError(section, key, e.what());
+   }
+   catch(LookupError& e)
+   {
+
    }
    return value;
 }
