@@ -3,6 +3,7 @@
 
 #include <string>
 #include <map>
+#include "config_lexer.h"
 
 namespace SimpleConfig
 {
@@ -29,12 +30,19 @@ public:
     std::string LookupString(const std::string& key);
 
 private:
-   void ParseError(int lineNum, std::string& line);
+   void ParseSectionHeader(std::istream& configStream);
+   void ParseAssignment(std::istream& configStream);
+
+   void ParseError(std::string& msg);
    void KeyError(std::string key);
    void ConversionError(std::string key, std::string caughtExceptionMsg);
 
    std::map<std::string, std::map<std::string, Token>> parseMap;
    std::string mFilename;
+   ConfigLexer lexer;
+
+   Token mCurToken;
+   std::string mCurSection;
 };
 
 

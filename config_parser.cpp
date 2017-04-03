@@ -29,9 +29,9 @@ void ConfigParser::Parse(std::istream& configStream)
 {
     mCurToken = lexer.GetNextToken(configStream);
     mCurSection = "";
-    while(curToken.type != END_OF_FILE)
+    while(mCurToken.type != END_OF_FILE)
     {
-        switch(curToken.type)
+        switch(mCurToken.type)
         {
         case LEFT_BRACKET:
             curSection = ParseSectionHeader(configStream);
@@ -43,60 +43,57 @@ void ConfigParser::Parse(std::istream& configStream)
             ParseError("Expected identifier or '['");
             break;
         }
+        mCurToken = lexer.GetNextToken(configStream);
     }
 }
 
-void ConfigParser::ParseLine(int& lineNum, std::string& line)
+void ConfigParser::ParseSectionHeader(std::istream& configStream)
 {
-      lineNum++;
-      Trim(line);
+    mCurToken = lexer.GetNextToken(configStream);
+    if(mCurToken.type == IDENTIFIER)
+    {
+        mCurSection = mCurToken.lexeme;
+    }
+    else
+    {
+        ParseError("Expected identifier");
+    }
 
-      if(line[0] == COMMENT_INDICATOR || line.empty())
-      {
-         return;
-      }
-
-      ParseKeyValuePair(lineNum, line);
+    mCurToken = lexer.GetNextToken(configStream);
+    if(mCurToken.type != RIGHT_BRACKET)
+    {
+        ParseError("Expected ']'");
+    }
 }
 
-void ConfigParser::ParseKeyValuePair(int lineNum, std::string& statement)
+void ConfigParser::ParseAssignment(std::istream& configStream)
 {
-   std::string key;
-   std::istringstream statementStream(statement);
-
-   if(std::getline(statementStream, key, '='))
-   {
-      std::string value;
-      if(std::getline(statementStream, value)) 
-      {
-         Trim(key);
-         Trim(value);
-         parseMap[key] = value;
-      }
-      else 
-      {
-         ParseError(lineNum, statement);
-      }
-   }
-   else
-   {
-      ParseError(lineNum, statement);
-   }
+    std::string id = mCurToken.lexeme;
+    mCurToken = lexer.GetNextToken(configStream);
+    if(mCurToken.type != EQUALS)
+    {
+        ParseError("Expected '='");
+    }
+    mCurToken = lexer.GetNextToken(configStream);
+    if(!IsLiteral(mCurToken))
+    {
+        ParseError("Expected literal"); 
+    }
+    parseMap[curSection][id] = mCurToken;
 }
 
-
-bool ConfigParser::LookupBoolean(const std::string& key)
+bool ConfigParser::LookupBoolean(const std::string& section, const std::string& key)
 {
    bool value;
-   if(parseMap.count(key) != 0)
+   if(parseMap[section].count(key) != 0)
    {
       try 
       {
-         value = Str2Bool(parseMap[key]);
+         value = Str2Bool(parseMap[section][key]);
       }
       catch(std::logic_error& e)
       {
-         ConversionError(key, e.what());
+         ConversionError(section, key, e.what());
       }
    }
    else
@@ -104,6 +101,11 @@ bool ConfigParser::LookupBoolean(const std::string& key)
       KeyError(key);
    }
    return value;
+}
+
+bool ConfigParser::LookupBoolean(const std::string& key)
+{
+   return LookupBoolean("", key);
 }
 
 double ConfigParser::LookupDouble(const std::string& key)
