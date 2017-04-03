@@ -29,7 +29,7 @@ CXXFLAGS += -g -Wall -Wextra -pthread
 
 # All tests produced by this Makefile.  Remember to add new tests you
 # created to the list.
-TESTS = config_parser_test parse_utilities_test
+TESTS = config_parser_test parse_utilities_test config_lexer_test all_config_tests 
 
 # All Google Test headers.  Usually you shouldn't change this
 # definition.
@@ -81,11 +81,32 @@ parse_utilities_test.o : $(USER_DIR)/parse_utilities_test.cpp
 parse_utilities_test : parse_utilities.o parse_utilities_test.o gtest_main.a
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -lpthread $^ -o $@
 
+config_lexer.o : $(USER_DIR)/config_lexer.cpp 
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $(USER_DIR)/config_lexer.cpp
+
+config_lexer_test.o : $(USER_DIR)/config_lexer_test.cpp
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $(USER_DIR)/config_lexer_test.cpp
+
 config_parser.o : $(USER_DIR)/config_parser.cpp 
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $(USER_DIR)/config_parser.cpp
 
 config_parser_test.o : $(USER_DIR)/config_parser_test.cpp
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $(USER_DIR)/config_parser_test.cpp
 
-config_parser_test : config_parser.o parse_utilities.o config_parser_test.o gtest_main.a
+config_parser_test : config_parser.o parse_utilities.o config_lexer.o config_parser_test.o gtest_main.a
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -lpthread $^ -o $@
+
+config_lexer_test : config_lexer.o parse_utilities.o config_lexer_test.o gtest_main.a
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -lpthread $^ -o $@
+
+all_config_tests : config_parser.o parse_utilities.o config_lexer.o config_parser_test.o config_lexer_test.o parse_utilities_test.o gtest_main.a
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -lpthread $^ -o $@
+
+maf_dmo_simulation_protocols.o : $(USER_DIR)/maf_dmo_simulation_protocols.cpp
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $(USER_DIR)/maf_dmo_simulation_protocols.cpp
+
+maf_dmo_simulation_protocols_test.o : $(USER_DIR)/maf_dmo_simulation_protocols_test.cpp
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $(USER_DIR)/maf_dmo_simulation_protocols_test.cpp
+
+maf_dmo_simulation_protocols_test : maf_dmo_simulation_protocols_test.o maf_dmo_simulation_protocols.o config_parser.o parse_utilities.o config_lexer.o gtest_main.a
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -lpthread $^ -o $@

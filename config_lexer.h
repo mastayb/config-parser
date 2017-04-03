@@ -31,8 +31,9 @@ public:
    ~ConfigLexer();
 
    const std::vector<Token> Scan(std::istream& source);
-private:
    Token GetNextToken(std::istream& source);
+
+private:
    Token LexBoolOrIdentifier(std::istream& source);
    Token LexNumber(std::istream& source);
    Token LexString(std::istream& source);

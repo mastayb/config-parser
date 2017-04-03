@@ -2,20 +2,25 @@
 #include <sstream>
 #include <cstdio>
 #include <cstring>
+#include <stdexcept>
 #include "parse_utilities.h"
 
 namespace SimpleConfig
 {
 
 
-const char _whitespace[] = {' ', '\t', '\r', '\f', '\v'};
-const std::set<char> ConfigLexer::whitespace(_whitespace, _whitespace+5);
+const char* _whitespace = " \t\r\f\v";
+const std::set<char> ConfigLexer::whitespace(_whitespace, _whitespace+strlen(_whitespace));
+
 const char* _digits= "0123456789";
 const std::set<char> ConfigLexer::digits(_digits, _digits+strlen(_digits));
+
 const char* _octal= "01234567";
 const std::set<char> ConfigLexer::octalDigits(_octal, _octal+strlen(_octal));
+
 const char* _hex= "0123456789ABCDEF";
 const std::set<char> ConfigLexer::hexDigits(_hex, _hex+strlen(_hex));
+
 const char *_letters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
 const std::set<char> ConfigLexer::letters(_letters, _letters+strlen(_letters));
 
@@ -220,14 +225,14 @@ Token ConfigLexer::LexNumber(std::istream& source)
 void ConfigLexer::UnexpectedCharacterError(char c)
 {
    std::ostringstream messageBuf;
-   messageBuf << "Unexpected character " << c << " on line " << line;
+   messageBuf << "Unexpected character '" << c << "' (line " << line <<")";
    throw std::logic_error(messageBuf.str());
 }
 
 void ConfigLexer::UnterminatedStringError(int startLine)
 {
    std::ostringstream messageBuf;
-   messageBuf<< "Unterminiated string on line "<< startLine;
+   messageBuf<< "Unterminiated string (line "<< startLine << ")";
    throw std::logic_error(messageBuf.str());
 }
 

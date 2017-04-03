@@ -105,7 +105,7 @@ Token ConfigParser::Lookup(const std::string& section, const std::string& key) c
       throw std::invalid_argument("Key" + key + " not found in section " + section);
    }
 
-   return keyIt->second;
+   return keyIt->second; 
 }
 
 
@@ -191,14 +191,14 @@ void ConfigParser::ParseError(const char* expected)
 {
    std::stringstream msgBuf;
    msgBuf << "Syntax error (line " << mCurToken.lineNum << ")\n";
-   msgBuf << "Expected: " << expected << " Got: " << mCurToken.lexeme;
+   msgBuf << "Expected: " << expected << " Got: " << mCurToken.lexeme; 
    throw std::runtime_error(msgBuf.str());
 }
 
 
 void ConfigParser::ConversionError(std::string section, std::string key, std::string caughtMsg, int sourceLine) const
 {
-   std::stringstream msgBuf;
+   std::stringstream msgBuf; 
    msgBuf << "Conversion error in lookup ";
    if(!section.empty())
    {
