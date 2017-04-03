@@ -140,7 +140,7 @@ TEST(ScanTest, UnexpecetedCharThrows)
 TEST(ScanTest, TokenSequenceMatchesExpected)
 {
     SimpleConfig::ConfigLexer l;
-    std::istringstream testSource(" test = true #comment\n\n test2 = 100 \n test3 = -0.3 \n test4 = \"str\" \n "); 
+    std::istringstream testSource(" test = true #comment\n\n test2 = 100 \n [Section] \n test4 = \"str\" \n "); 
     const std::vector<SimpleConfig::Token> testTokens = l.Scan(testSource);
     EXPECT_EQ(testTokens[0].type, SimpleConfig::IDENTIFIER);
     EXPECT_EQ(testTokens[0].lexeme, "test");
@@ -160,6 +160,9 @@ TEST(ScanTest, TokenSequenceMatchesExpected)
     EXPECT_EQ(testTokens[5].type, SimpleConfig::INTEGER);
     EXPECT_EQ(testTokens[5].lexeme, "100");
     EXPECT_EQ(testTokens[5].lineNum, 3);
+    EXPECT_EQ(testTokens[7].type, SimpleConfig::IDENTIFIER);
+    EXPECT_EQ(testTokens[7].lexeme, "Section");
+    EXPECT_EQ(testTokens[7].lineNum, 4);
     EXPECT_EQ(testTokens[11].type, SimpleConfig::STRING);
     EXPECT_EQ(testTokens[11].lexeme, "str");
     EXPECT_EQ(testTokens[11].lineNum, 5);

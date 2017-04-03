@@ -33,7 +33,8 @@ public:
     const std::vector<Token> Scan(std::istream& source);
 private:
     Token GetNextToken(std::istream& source);
-    Token LexToken(std::istream& source);
+    Token LexBoolOrIdentifier(std::istream& source);
+    Token LexNumber(std::istream& source);
     Token LexString(std::istream& source);
     void LexComment(std::istream& source);
     void UnexpectedCharacterError(char c);
@@ -42,8 +43,10 @@ private:
     int line;
 
     static const std::set<char> whitespace;
-    static const std::set<char> numeric;
-    static const std::set<char> alhpaNumeric;
+    static const std::set<char> digits;
+    static const std::set<char> letters;
+    static const std::set<char> octalDigits;
+    static const std::set<char> hexDigits;
 
     
 };

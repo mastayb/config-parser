@@ -10,10 +10,14 @@ namespace SimpleConfig
 
 const char _whitespace[] = {' ', '\t', '\r', '\f', '\v'};
 const std::set<char> ConfigLexer::whitespace(_whitespace, _whitespace+5);
-const char* _numeric = "+-0123456789";
-const std::set<char> ConfigLexer::numeric(_numeric, _numeric+strlen(_numeric));
-const char *_alphanumeric = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_0123456789+-";
-const std::set<char> ConfigLexer::alhpaNumeric(_alphanumeric, _alphanumeric+strlen(_alphanumeric)); 
+const char* _digits= "0123456789";
+const std::set<char> ConfigLexer::digits(_digits, _digits+strlen(_digits));
+const char* _octal= "01234567";
+const std::set<char> ConfigLexer::octalDigits(_octal, _octal+strlen(_octal));
+const char* _hex= "0123456789ABCDEF";
+const std::set<char> ConfigLexer::hexDigits(_hex, _hex+strlen(_hex));
+const char *_letters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+const std::set<char> ConfigLexer::letters(_letters, _letters+strlen(_letters)); 
 
 ConfigLexer::ConfigLexer(): line(1) 
 {}
@@ -73,10 +77,15 @@ Token ConfigLexer::GetNextToken(std::istream& source)
         {
             LexComment(source);
         }
-        else if (alhpaNumeric.count(c))
+        else if (digits.count(c) || c == '-')
         {
             source.unget();
-            return LexToken(source);
+            return LexNumber(source);
+        }
+        else if (letters.count(c) || c == '_')
+        {
+            source.unget();
+            return LexBoolOrIdentifier(source);
         }
         else if (c == EOF)
         {
@@ -124,35 +133,89 @@ void ConfigLexer::LexComment(std::istream& source)
     source.unget();
 }
 
-Token ConfigLexer::LexToken(std::istream& source)
+Token ConfigLexer::LexBoolOrIdentifier(std::istream& source)
 {
-    std::string word;
-    source >> word;
+    std::stringstream lexeme;
+    char c = source.get();
+    while(letters.count(c) || digits.count(c) || c == '_')
+    {
+        lexeme << c;
+        c = source.get();
+    }
+    source.unget();
 
-    std::string upperCasedWord = ToUppered(word);
+    std::string upperCasedWord = ToUppered(lexeme.str());
     if(upperCasedWord == "TRUE" || upperCasedWord == "FALSE")
     {
-        Token t = {BOOL, word, line};
+        Token t = {BOOL, lexeme.str(), line};
         return t;
     }
-    else if (numeric.count(word[0]))
-    {
-        if(word.find('.') == std::string::npos)
-        {
-            Token t = {INTEGER, word, line};
-            return t;
-        }
-
-        Token t = {REAL_NUMBER, word, line};
-        return t;
-    }
-    else 
-    {
-        Token t = {IDENTIFIER, word, line};
-        return t;
-    }
+    Token t = {IDENTIFIER, lexeme.str(), line};
+    return t;
 }
+    
+Token ConfigLexer::LexNumber(std::istream& source)
+{
+    std::stringstream lexeme;
+    bool real=false;
+    char c = source.get();
+    std::set<char> baseDigits;
+    baseDigits = digits;
 
+    if(c == '-')
+    {
+        lexeme << c;
+        c = source.get();
+    }
+    if(c == '0')
+    {
+        lexeme << c;
+        c = source.get();
+        baseDigits = octalDigits;
+        if(c == 'x')
+        {
+            lexeme << c;
+            c = source.get();
+            baseDigits = hexDigits;
+        }
+    }
+    while(baseDigits.count(c))
+    {
+        lexeme << c;
+        c = source.get();
+    }
+    if(c == '.')
+    {
+        real=true;
+        lexeme << c;
+        c = source.get();
+    }
+    while(baseDigits.count(c))
+    {
+        lexeme << c;
+        c = source.get();
+    }
+    if(c == 'e' || c == 'E')
+    {
+        real=true;
+        lexeme << c;
+        c = source.get();
+    }
+    while(baseDigits.count(c))
+    {
+        lexeme << c;
+        c = source.get();
+    }
+    source.unget();
+
+    if(real)
+    {
+        Token t = {REAL_NUMBER, lexeme.str(), line};
+        return t;
+    }
+    Token t = {INTEGER, lexeme.str(), line};
+    return t;
+}
 
 void ConfigLexer::UnexpectedCharacterError(char c)
 {
