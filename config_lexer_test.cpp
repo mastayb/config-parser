@@ -113,6 +113,13 @@ TEST(ScanTest, RealNumberLexingWorks)
     EXPECT_EQ(testTokens[0].lineNum, 1);
 }
 
+TEST(ScanTest, BadNumberFormatThrows)
+{
+    SimpleConfig::ConfigLexer l;
+    std::istringstream testSource(" -1.432.4352e3 "); 
+    EXPECT_THROW(l.Scan(testSource), std::logic_error);
+}
+
 TEST(ScanTest, IdLexingWorks)
 {
     SimpleConfig::ConfigLexer l;
