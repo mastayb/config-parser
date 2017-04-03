@@ -1,0 +1,9 @@
+#Grammar for config files
+
+config := {assignment} {section}
+section := header {assignment}
+header := "[" identifier "]" 
+assignment :=  identifier  "="  literal 
+comment := "#" {? any character ? - nl}
+literal := real | integer | string | bool 
+
