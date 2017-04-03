@@ -22,19 +22,28 @@ void ConfigParser::Parse(const char *filename)
       std::string fName(filename);
       throw std::runtime_error("Could not open file " + fName);
    }
-
    Parse(file);
 }
 
 void ConfigParser::Parse(std::istream& configStream)
 {
-   std::string line;
-   int lineNum = 0;
-   
-   while(std::getline(configStream, line))
-   {
-      ParseLine(lineNum, line);
-   }
+    mCurToken = lexer.GetNextToken(configStream);
+    mCurSection = "";
+    while(curToken.type != END_OF_FILE)
+    {
+        switch(curToken.type)
+        {
+        case LEFT_BRACKET:
+            curSection = ParseSectionHeader(configStream);
+            break;
+        case IDENTIFIER:
+            ParseAssignment(configStream);
+            break;
+        default:
+            ParseError("Expected identifier or '['");
+            break;
+        }
+    }
 }
 
 void ConfigParser::ParseLine(int& lineNum, std::string& line)

@@ -11,37 +11,30 @@ class ConfigParser
 {
 public:
    ConfigParser();
-   virtual ~ConfigParser();
+    ~ConfigParser();
 
-   //Parses line by line with an extremely simple/rudimentary grammar
-   //Blank lines and lines starting with COMMENT_INDICATOR are ignored
-   //All other lines should be in the form:
-   //key_value_pair: key, {ws}, '=', {ws}, value
-   //and will be entered into the map for query by key
-   virtual void Parse(const char *filename);
-   virtual void Parse(std::istream& configStream);
+    void Parse(const char *filename);
+    void Parse(std::istream& configStream);
 
-   virtual bool LookupBoolean(const std::string& key);
+    bool LookupBoolean(const std::string& section, const std::string& key); 
+    bool LookupBoolean(const std::string& key); 
    
-   virtual double LookupDouble(const std::string& key);
+    double LookupDouble(const std::string& section, const std::string& key); 
+    double LookupDouble(const std::string& key); 
 
-   virtual int LookupInteger(const std::string& key);
+    int LookupInteger(const std::string& section, const std::string& key);
+    int LookupInteger(const std::string& key);
 
-   virtual std::string LookupString(const std::string& key);
-
-   static const char COMMENT_INDICATOR = '#';
+    std::string LookupString(const std::string& section, const std::string& key);
+    std::string LookupString(const std::string& key);
 
 private:
-   void ParseLine(int& lineNum, std::string& line);
-   void ParseKeyValuePair(int lineNum, std::string& statement);
-
    void ParseError(int lineNum, std::string& line);
    void KeyError(std::string key);
    void ConversionError(std::string key, std::string caughtExceptionMsg);
 
-   std::map<std::string, std::string> parseMap;
+   std::map<std::string, std::map<std::string, Token>> parseMap;
    std::string mFilename;
-
 };
 
 
