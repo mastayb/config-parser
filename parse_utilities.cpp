@@ -45,7 +45,7 @@ std::string Trimmed(std::string s)
 
 void ToUpper(std::string &s)
 {
-   std::transform(s.begin(), s.end(), s.begin(), std::toupper); 
+   std::transform(s.begin(), s.end(), s.begin(), std::toupper);
 }
 
 std::string ToUppered(std::string s)
@@ -105,7 +105,7 @@ double Str2Double(const char *s)
 
    if(*s == '\0')
    {
-      throw std::invalid_argument("cannot convert empty string to double"); 
+      throw std::invalid_argument("cannot convert empty string to double");
    }
 
    if(*end != '\0')
@@ -119,8 +119,8 @@ double Str2Double(const char *s)
 bool Str2Bool(std::string s)
 {
    ToUpper(s);
-   
-   if (s == "TRUE") 
+
+   if (s == "TRUE")
    {
       return true;
    }

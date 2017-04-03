@@ -27,86 +27,86 @@ void ConfigParser::Parse(const char *filename)
 
 void ConfigParser::Parse(std::istream& configStream)
 {
-    mCurToken = lexer.GetNextToken(configStream);
-    mCurSection = "";
-    while(mCurToken.type != END_OF_FILE)
-    {
-        switch(mCurToken.type)
-        {
-        case LEFT_BRACKET:
-            curSection = ParseSectionHeader(configStream);
-            break;
-        case IDENTIFIER:
-            ParseAssignment(configStream);
-            break;
-        default:
-            ParseError("Expected identifier or '['");
-            break;
-        }
-        mCurToken = lexer.GetNextToken(configStream);
-    }
+   mCurToken = lexer.GetNextToken(configStream);
+   mCurSection = "";
+   while(mCurToken.type != END_OF_FILE)
+   {
+      switch(mCurToken.type)
+      {
+      case LEFT_BRACKET:
+         curSection = ParseSectionHeader(configStream);
+         break;
+      case IDENTIFIER:
+         ParseAssignment(configStream);
+         break;
+      default:
+         ParseError("Expected identifier or '['");
+         break;
+      }
+      mCurToken = lexer.GetNextToken(configStream);
+   }
 }
 
 void ConfigParser::ParseSectionHeader(std::istream& configStream)
 {
-    mCurToken = lexer.GetNextToken(configStream);
-    if(mCurToken.type == IDENTIFIER)
-    {
-        mCurSection = mCurToken.lexeme;
-    }
-    else
-    {
-        ParseError("Expected identifier");
-    }
+   mCurToken = lexer.GetNextToken(configStream);
+   if(mCurToken.type == IDENTIFIER)
+   {
+      mCurSection = mCurToken.lexeme;
+   }
+   else
+   {
+      ParseError("Expected identifier");
+   }
 
-    mCurToken = lexer.GetNextToken(configStream);
-    if(mCurToken.type != RIGHT_BRACKET)
-    {
-        ParseError("Expected ']'");
-    }
+   mCurToken = lexer.GetNextToken(configStream);
+   if(mCurToken.type != RIGHT_BRACKET)
+   {
+      ParseError("Expected ']'");
+   }
 }
 
 void ConfigParser::ParseAssignment(std::istream& configStream)
 {
-    std::string id = mCurToken.lexeme;
-    mCurToken = lexer.GetNextToken(configStream);
-    if(mCurToken.type != EQUALS)
-    {
-        ParseError("Expected '='");
-    }
-    mCurToken = lexer.GetNextToken(configStream);
-    if(!IsLiteral(mCurToken))
-    {
-        ParseError("Expected literal"); 
-    }
-    parseMap[curSection][id] = mCurToken;
+   std::string id = mCurToken.lexeme;
+   mCurToken = lexer.GetNextToken(configStream);
+   if(mCurToken.type != EQUALS)
+   {
+      ParseError("Expected '='");
+   }
+   mCurToken = lexer.GetNextToken(configStream);
+   if(!IsLiteral(mCurToken))
+   {
+      ParseError("Expected literal");
+   }
+   parseMap[curSection][id] = mCurToken;
 }
 
 Token ConfigParser::Lookup(const std::string& section, const std::string& key)
 {
-    if(parseMap.count(section) == 0)
-    {
-        SectionError(section);
-    }
-    if(parseMap[section].count(key) == 0)
-    {
-        KeyError(section, key);
-    }
+   if(parseMap.count(section) == 0)
+   {
+      SectionError(section);
+   }
+   if(parseMap[section].count(key) == 0)
+   {
+      KeyError(section, key);
+   }
 
-    return parseMap[section][key];
+   return parseMap[section][key];
 }
 
 
 bool ConfigParser::LookupBoolean(const std::string& section, const std::string& key)
 {
    bool value;
-   try 
+   try
    {
       value = Str2Bool(Lookup(section, key).lexeme);
    }
    catch(ConversionError& e)
    {
-     //ConversionError(section, key, e.what());
+      //ConversionError(section, key, e.what());
    }
    catch(LookupError& e)
    {
@@ -125,7 +125,7 @@ double ConfigParser::LookupDouble(const std::string& key)
    double value;
    if(parseMap.count(key) != 0)
    {
-      try 
+      try
       {
          value = Str2Double(parseMap[key]);
       }
@@ -146,7 +146,7 @@ int ConfigParser::LookupInteger(const std::string& key)
    int value;
    if(parseMap.count(key) != 0)
    {
-      try 
+      try
       {
          value = Str2Int(parseMap[key]);
       }
@@ -185,7 +185,7 @@ void ConfigParser::ParseError(int lineNum, std::string& line)
    {
       msgBuf << mFilename;
    }
-   msgBuf << "(" << lineNum << "):" << line; 
+   msgBuf << "(" << lineNum << "):" << line;
 
    throw std::runtime_error(msgBuf.str());
 }

@@ -3,8 +3,9 @@
 #include <stdexcept>
 
 
-namespace {
-   
+namespace
+{
+
 class TrimUtilitiesTest: public ::testing::Test
 {
 protected:
@@ -166,11 +167,11 @@ TEST_F(TrimUtilitiesTest, OnlyWhiteSpace)
    SimpleConfig::LTrim(testString);
    EXPECT_EQ("", testString);
 
-   testString = whiteSpaceString; 
+   testString = whiteSpaceString;
    SimpleConfig::RTrim(testString);
    EXPECT_EQ("", testString);
 
-   testString = whiteSpaceString; 
+   testString = whiteSpaceString;
    SimpleConfig::Trim(testString);
    EXPECT_EQ("", testString);
 
@@ -201,26 +202,26 @@ TEST(Str2IntTest, EmptyString)
 {
    std::string testString;
    EXPECT_THROW(SimpleConfig::Str2Int(testString), std::invalid_argument);
-   EXPECT_THROW(SimpleConfig::Str2Int(testString.c_str()), std::invalid_argument); 
+   EXPECT_THROW(SimpleConfig::Str2Int(testString.c_str()), std::invalid_argument);
 }
 
 TEST(Str2IntTest, UnexpectedForm)
 {
    std::string testString = " abc";
    EXPECT_THROW(SimpleConfig::Str2Int(testString), std::invalid_argument);
-   EXPECT_THROW(SimpleConfig::Str2Int(testString.c_str()), std::invalid_argument); 
+   EXPECT_THROW(SimpleConfig::Str2Int(testString.c_str()), std::invalid_argument);
 
    testString = "123abc";
    EXPECT_THROW(SimpleConfig::Str2Int(testString), std::invalid_argument);
-   EXPECT_THROW(SimpleConfig::Str2Int(testString.c_str()), std::invalid_argument); 
+   EXPECT_THROW(SimpleConfig::Str2Int(testString.c_str()), std::invalid_argument);
 
    testString = "123 123";
    EXPECT_THROW(SimpleConfig::Str2Int(testString), std::invalid_argument);
-   EXPECT_THROW(SimpleConfig::Str2Int(testString.c_str()), std::invalid_argument); 
+   EXPECT_THROW(SimpleConfig::Str2Int(testString.c_str()), std::invalid_argument);
 
    testString = "123.123";
    EXPECT_THROW(SimpleConfig::Str2Int(testString), std::invalid_argument);
-   EXPECT_THROW(SimpleConfig::Str2Int(testString.c_str()), std::invalid_argument); 
+   EXPECT_THROW(SimpleConfig::Str2Int(testString.c_str()), std::invalid_argument);
 }
 
 TEST(Str2IntTest, Str2IntWorks)
@@ -297,28 +298,28 @@ TEST(ToUpperTest, ToUpperWorks)
 TEST(Str2Bool, Str2BoolWorks)
 {
    std::string testString = "true";
-   EXPECT_TRUE(SimpleConfig::Str2Bool(testString)); 
-   EXPECT_TRUE(SimpleConfig::Str2Bool(testString.c_str())); 
+   EXPECT_TRUE(SimpleConfig::Str2Bool(testString));
+   EXPECT_TRUE(SimpleConfig::Str2Bool(testString.c_str()));
 
    testString = "True";
-   EXPECT_TRUE(SimpleConfig::Str2Bool(testString)); 
-   EXPECT_TRUE(SimpleConfig::Str2Bool(testString.c_str())); 
+   EXPECT_TRUE(SimpleConfig::Str2Bool(testString));
+   EXPECT_TRUE(SimpleConfig::Str2Bool(testString.c_str()));
 
    testString = "false";
-   EXPECT_FALSE(SimpleConfig::Str2Bool(testString)); 
-   EXPECT_FALSE(SimpleConfig::Str2Bool(testString.c_str())); 
+   EXPECT_FALSE(SimpleConfig::Str2Bool(testString));
+   EXPECT_FALSE(SimpleConfig::Str2Bool(testString.c_str()));
 
    testString = "FALSE";
-   EXPECT_FALSE(SimpleConfig::Str2Bool(testString)); 
-   EXPECT_FALSE(SimpleConfig::Str2Bool(testString.c_str())); 
+   EXPECT_FALSE(SimpleConfig::Str2Bool(testString));
+   EXPECT_FALSE(SimpleConfig::Str2Bool(testString.c_str()));
 
    testString = "1";
-   EXPECT_TRUE(SimpleConfig::Str2Bool(testString)); 
-   EXPECT_TRUE(SimpleConfig::Str2Bool(testString.c_str())); 
+   EXPECT_TRUE(SimpleConfig::Str2Bool(testString));
+   EXPECT_TRUE(SimpleConfig::Str2Bool(testString.c_str()));
 
    testString = "0";
-   EXPECT_FALSE(SimpleConfig::Str2Bool(testString)); 
-   EXPECT_FALSE(SimpleConfig::Str2Bool(testString.c_str())); 
+   EXPECT_FALSE(SimpleConfig::Str2Bool(testString));
+   EXPECT_FALSE(SimpleConfig::Str2Bool(testString.c_str()));
 }
 
 TEST(Str2Bool, UnexpectedForm)

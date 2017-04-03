@@ -3,7 +3,7 @@
 #include <sstream>
 #include <stdexcept>
 
-namespace 
+namespace
 {
 
 TEST(ParseTest, NonexistantFile)
@@ -20,8 +20,8 @@ TEST(ParseTest, ExistingFile)
 
 TEST(ParseTest, BadConfigFormat)
 {
-   std::string badConfig = 
-      "avc=xyz\n" 
+   std::string badConfig =
+      "avc=xyz\n"
       "bcd";
    std::istringstream badConfStream(badConfig);
    SimpleConfig::ConfigParser c;
@@ -29,7 +29,7 @@ TEST(ParseTest, BadConfigFormat)
 }
 
 
-class ConfigParserTest : public ::testing::Test 
+class ConfigParserTest : public ::testing::Test
 {
 protected:
 
@@ -47,7 +47,7 @@ protected:
          "testString=Hello World\n"),
       goodConfigStream(goodConfig)
    {
-      testConfigParser.Parse(goodConfigStream); 
+      testConfigParser.Parse(goodConfigStream);
    }
 
 
@@ -57,63 +57,78 @@ protected:
    SimpleConfig::ConfigParser testConfigParser;
 };
 
-TEST_F(ConfigParserTest, LookupBoolTrueWorks) {
+TEST_F(ConfigParserTest, LookupBoolTrueWorks)
+{
    EXPECT_EQ(true, testConfigParser.LookupBoolean("testBoolTrue"));
 }
 
-TEST_F(ConfigParserTest, LookupBoolFalseWorks) {
+TEST_F(ConfigParserTest, LookupBoolFalseWorks)
+{
    EXPECT_EQ(false, testConfigParser.LookupBoolean("testBoolFalse"));
 }
 
-TEST_F(ConfigParserTest, BadBoolLookupThrows) {
+TEST_F(ConfigParserTest, BadBoolLookupThrows)
+{
    EXPECT_THROW(testConfigParser.LookupBoolean("testString"), std::logic_error);
 }
 
-TEST_F(ConfigParserTest, BadKeyBoolLookupThrows) {
+TEST_F(ConfigParserTest, BadKeyBoolLookupThrows)
+{
    EXPECT_THROW(testConfigParser.LookupBoolean("testNonExistantKey"), std::logic_error);
 }
 
-TEST_F(ConfigParserTest, LookupIntWorks) {
+TEST_F(ConfigParserTest, LookupIntWorks)
+{
    EXPECT_EQ(1, testConfigParser.LookupInteger("testInt"));
 }
 
-TEST_F(ConfigParserTest, LookupNegativeIntWorks) {
+TEST_F(ConfigParserTest, LookupNegativeIntWorks)
+{
    EXPECT_EQ(-5, testConfigParser.LookupInteger("testNegativeInt"));
 }
 
-TEST_F(ConfigParserTest, BadIntLookupThrows) {
+TEST_F(ConfigParserTest, BadIntLookupThrows)
+{
    EXPECT_THROW(testConfigParser.LookupInteger("testString"), std::logic_error);
 }
 
-TEST_F(ConfigParserTest, BadKeyIntLookupThrows) {
+TEST_F(ConfigParserTest, BadKeyIntLookupThrows)
+{
    EXPECT_THROW(testConfigParser.LookupInteger("testNonExistantKey"), std::logic_error);
 }
 
-TEST_F(ConfigParserTest, LookupDoubleWorks) {
+TEST_F(ConfigParserTest, LookupDoubleWorks)
+{
    EXPECT_DOUBLE_EQ(2.5, testConfigParser.LookupDouble("testDouble"));
 }
 
-TEST_F(ConfigParserTest, LookupNegativeDoubleWorks) {
+TEST_F(ConfigParserTest, LookupNegativeDoubleWorks)
+{
    EXPECT_DOUBLE_EQ(-3.3, testConfigParser.LookupDouble("testNegativeDouble"));
 }
 
-TEST_F(ConfigParserTest, LookupScientificDoubleWorks) {
+TEST_F(ConfigParserTest, LookupScientificDoubleWorks)
+{
    EXPECT_DOUBLE_EQ(-3.5e7, testConfigParser.LookupDouble("testScientific"));
 }
 
-TEST_F(ConfigParserTest, BadDoubleLookupThrows) {
+TEST_F(ConfigParserTest, BadDoubleLookupThrows)
+{
    EXPECT_THROW(testConfigParser.LookupDouble("testString"), std::logic_error);
 }
 
-TEST_F(ConfigParserTest, BadKeyDoubleLookupThrows) {
+TEST_F(ConfigParserTest, BadKeyDoubleLookupThrows)
+{
    EXPECT_THROW(testConfigParser.LookupDouble("testNonExistantKey"), std::logic_error);
 }
 
-TEST_F(ConfigParserTest, LookupStringWorks) {
+TEST_F(ConfigParserTest, LookupStringWorks)
+{
    EXPECT_EQ(testConfigParser.LookupString("testString"), "Hello World");
 }
 
-TEST_F(ConfigParserTest, BadKeyLookupStringThrows) {
+TEST_F(ConfigParserTest, BadKeyLookupStringThrows)
+{
    EXPECT_THROW(testConfigParser.LookupString("testNonExistantKey"), std::logic_error);
 }
 
